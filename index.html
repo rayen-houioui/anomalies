@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Jeu d'anomalies</title>
+    <style>
+        /* ---- Styles généraux ---- */
+        body {
+            font-family: Arial, sans-serif;
+            background: #f7f7f7;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            transition: background 0.5s;
+        }
+
+        h1, h2 {
+            color: #2c3e50;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 18px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+        }
+
+        .green-btn {
+            background-color: #27ae60;
+            color: white;
+        }
+
+        .white-btn {
+            background-color: white;
+            color: #27ae60;
+            border: 2px solid #27ae60;
+        }
+
+        .question-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+            text-align: center;
+            max-width: 600px;
+        }
+
+        .images {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .images img {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            border: 4px solid #ccc;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .images img:hover {
+            transform: scale(1.05);
+            border-color: #27ae60;
+        }
+
+        .feedback {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .feedback.show {
+            opacity: 1;
+        }
+
+        .explanation {
+            margin-top: 10px;
+            font-size: 16px;
+            background: #ecf0f1;
+            padding: 10px;
+            border-radius: 5px;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+    </style>
+</head>
+<body>
+
+    <!-- PAGE D'ACCUEIL -->
+    <div id="startPage">
+        <h1>Bienvenue sur le jeu d'anomalies</h1>
+        <p>Découvre l'anomalie dans les images et apprend pourquoi c'est important !</p>
+        <button class="green-btn" onclick="startGame()">Commencer</button>
+    </div>
+
+    <!-- CONTENU DU JEU -->
+    <div id="gamePage" class="question-container" style="display:none;">
+        <h2 id="criteria"></h2>
+        <div class="images">
+            <img id="img1" src="" alt="Image 1" onclick="checkAnswer(0)">
+            <img id="img2" src="" alt="Image 2" onclick="checkAnswer(1)">
+        </div>
+        <div id="feedback" class="feedback"></div>
+        <div id="explanation" class="explanation"></div>
+        <button id="nextBtn" class="green-btn" style="display:none;" onclick="nextQuestion()">Next</button>
+    </div>
+
+    <script>
+        // -----------------------
+        // LISTE DES QUESTIONS
+        // -----------------------
+        const questions = [
+            {
+                images: ["https://via.placeholder.com/200?text=Image+A1", 
+                         "https://via.placeholder.com/200?text=Image+B1"],
+                correct: 0, // index de la bonne image
+                criteria: "Anomalie X",
+                definition: "Définition claire de l'anomalie X.",
+                explanation: "La bonne réponse est Image A car elle montre l'anomalie X. Image B est normale."
+            },
+            {
+                images: ["https://via.placeholder.com/200?text=Image+A2", 
+                         "https://via.placeholder.com/200?text=Image+B2"],
+                correct: 1,
+                criteria: "Anomalie Y",
+                definition: "Définition de l'anomalie Y.",
+                explanation: "La bonne réponse est Image B car elle présente l'anomalie Y. Image A ne la montre pas."
+            },
+            // Ajoute ici d'autres questions facilement
+        ];
+
+        let currentIndex = 0;
+
+        // -----------------------
+        // FONCTIONS
+        // -----------------------
+
+        // Démarrer le jeu
+        function startGame() {
+            document.getElementById("startPage").style.display = "none";
+            document.getElementById("gamePage").style.display = "flex";
+            showQuestion();
+        }
+
+        // Afficher la question actuelle
+        function showQuestion() {
+            const q = questions[currentIndex];
+            document.getElementById("criteria").innerHTML = q.criteria + "<br><small>" + q.definition + "</small>";
+            document.getElementById("img1").src = q.images[0];
+            document.getElementById("img2").src = q.images[1];
+            document.getElementById("feedback").classList.remove("show");
+            document.getElementById("feedback").innerHTML = "";
+            document.getElementById("explanation").innerHTML = "";
+            document.getElementById("nextBtn").style.display = "none";
+        }
+
+        // Vérifier la réponse de l'utilisateur
+        function checkAnswer(selected) {
+            const q = questions[currentIndex];
+            const feedback = document.getElementById("feedback");
+            const explanation = document.getElementById("explanation");
+
+            if(selected === q.correct) {
+                feedback.innerHTML = "✅ Correct !";
+                feedback.style.color = "green";
+            } else {
+                feedback.innerHTML = "❌ Incorrect !";
+                feedback.style.color = "red";
+            }
+            feedback.classList.add("show");
+            explanation.innerHTML = q.explanation;
+
+            // Montrer le bouton "Next"
+            document.getElementById("nextBtn").style.display = "inline-block";
+        }
+
+        // Passer à la question suivante
+        function nextQuestion() {
+            currentIndex++;
+            if(currentIndex >= questions.length) {
+                alert("🎉 Tu as terminé toutes les questions !");
+                currentIndex = 0; // recommencer si tu veux
+            }
+            showQuestion();
+        }
+    </script>
+
+</body>
+</html>
