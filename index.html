@@ -1,208 +1,246 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>Jeu d'anomalies</title>
-    <style>
-        /* ---- Styles généraux ---- */
-        body {
-            font-family: Arial, sans-serif;
-            background: #f7f7f7;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            transition: background 0.5s;
-        }
+<meta charset="UTF-8">
+<title>MediScan – Jeu d’Anomalies Médicales</title>
 
-        h1, h2 {
-            color: #2c3e50;
-        }
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
 
-        button {
-            padding: 10px 20px;
-            font-size: 18px;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: all 0.3s;
-        }
+<style>
+* { box-sizing: border-box; }
 
-        button:hover {
-            transform: scale(1.05);
-        }
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: #f4fdfc;
+  overflow-x: hidden;
+}
 
-        .green-btn {
-            background-color: #27ae60;
-            color: white;
-        }
+h1, h2 { font-family: 'Poppins', sans-serif; margin: 0; }
 
-        .white-btn {
-            background-color: white;
-            color: #27ae60;
-            border: 2px solid #27ae60;
-        }
+button {
+  padding: 14px 28px;
+  border-radius: 8px;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  background: #16a34a;
+  color: white;
+  transition: transform .3s, box-shadow .3s;
+}
 
-        .question-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 20px;
-            text-align: center;
-            max-width: 600px;
-        }
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(22,163,74,.3);
+}
 
-        .images {
-            display: flex;
-            gap: 20px;
-            margin-top: 20px;
-        }
+/* TOP BAR */
+.top-bar {
+  width: 100%;
+  background: linear-gradient(90deg, #16a34a, #22c55e);
+  color: white;
+  text-align: center;
+  padding: 10px;
+  animation: slide 6s infinite alternate;
+}
 
-        .images img {
-            width: 200px;
-            height: 200px;
-            object-fit: cover;
-            border: 4px solid #ccc;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
+@keyframes slide {
+  from { letter-spacing: 1px; }
+  to { letter-spacing: 3px; }
+}
 
-        .images img:hover {
-            transform: scale(1.05);
-            border-color: #27ae60;
-        }
+/* BACKGROUND FLOAT */
+.bg span {
+  position: fixed;
+  border-radius: 50%;
+  background: rgba(22,163,74,0.08);
+  animation: float 20s infinite ease-in-out;
+}
 
-        .feedback {
-            margin-top: 20px;
-            font-size: 18px;
-            font-weight: bold;
-            opacity: 0;
-            transition: opacity 0.5s;
-        }
+.bg span:nth-child(1) { width: 150px; height: 150px; top: 10%; left: 5%; }
+.bg span:nth-child(2) { width: 220px; height: 220px; top: 60%; left: 80%; animation-duration: 25s; }
+.bg span:nth-child(3) { width: 100px; height: 100px; top: 80%; left: 20%; animation-duration: 18s; }
 
-        .feedback.show {
-            opacity: 1;
-        }
+@keyframes float {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-40px); }
+  100% { transform: translateY(0); }
+}
 
-        .explanation {
-            margin-top: 10px;
-            font-size: 16px;
-            background: #ecf0f1;
-            padding: 10px;
-            border-radius: 5px;
-            animation: fadeIn 0.5s;
-        }
+/* ANIMATIONS */
+.fade-up { opacity: 0; transform: translateY(30px); animation: fadeUp 1s forwards; }
+.delay-1 { animation-delay: .4s; }
+.delay-2 { animation-delay: .8s; }
+@keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
 
-        @keyframes fadeIn {
-            from {opacity: 0;}
-            to {opacity: 1;}
-        }
-    </style>
+/* WELCOME PAGE */
+#welcome {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px;
+  transition: all .5s ease;
+}
+
+#welcome p {
+  max-width: 600px;
+  color: #475569;
+  font-size: 18px;
+  margin: 20px 0 40px;
+}
+
+/* GAME PAGE */
+#game { display: none; min-height: 100vh; padding: 40px; text-align: center; }
+
+.images { display: flex; justify-content: center; gap: 30px; margin-top: 30px; }
+.images img {
+  width: 220px; height: 220px; border-radius: 12px; border: 4px solid #e5e7eb;
+  cursor: pointer; transition: all .3s;
+}
+.images img:hover { transform: scale(1.05); border-color: #16a34a; }
+
+.feedback { font-size: 20px; margin-top: 20px; font-weight: 600; }
+.explanation { margin-top: 10px; color: #334155; }
+
+#nextBtn, #prevBtn {
+  margin-top: 30px;
+  display: none;
+  width: 200px;
+}
+
+/* Separate button placement */
+#prevBtn { margin-right: 0; margin-bottom: 10px; }
+#nextBtn { margin-top: 0; }
+</style>
 </head>
+
 <body>
 
-    <!-- PAGE D'ACCUEIL -->
-    <div id="startPage">
-        <h1>Bienvenue sur le jeu d'anomalies</h1>
-        <p>Découvre l'anomalie dans les images et apprend pourquoi c'est important !</p>
-        <button class="green-btn" onclick="startGame()">Commencer</button>
-    </div>
+<div class="top-bar">Plateforme éducative médicale interactive</div>
 
-    <!-- CONTENU DU JEU -->
-    <div id="gamePage" class="question-container" style="display:none;">
-        <h2 id="criteria"></h2>
-        <div class="images">
-            <img id="img1" src="" alt="Image 1" onclick="checkAnswer(0)">
-            <img id="img2" src="" alt="Image 2" onclick="checkAnswer(1)">
-        </div>
-        <div id="feedback" class="feedback"></div>
-        <div id="explanation" class="explanation"></div>
-        <button id="nextBtn" class="green-btn" style="display:none;" onclick="nextQuestion()">Next</button>
-    </div>
+<div class="bg">
+  <span></span><span></span><span></span>
+</div>
 
-    <script>
-        // -----------------------
-        // LISTE DES QUESTIONS
-        // -----------------------
-        const questions = [
-            {
-                images: ["https://via.placeholder.com/200?text=Image+A1", 
-                         "https://via.placeholder.com/200?text=Image+B1"],
-                correct: 0, // index de la bonne image
-                criteria: "Anomalie X",
-                definition: "Définition claire de l'anomalie X.",
-                explanation: "La bonne réponse est Image A car elle montre l'anomalie X. Image B est normale."
-            },
-            {
-                images: ["https://via.placeholder.com/200?text=Image+A2", 
-                         "https://via.placeholder.com/200?text=Image+B2"],
-                correct: 1,
-                criteria: "Anomalie Y",
-                definition: "Définition de l'anomalie Y.",
-                explanation: "La bonne réponse est Image B car elle présente l'anomalie Y. Image A ne la montre pas."
-            },
-            // Ajoute ici d'autres questions facilement
-        ];
+<!-- WELCOME -->
+<div id="welcome">
+  <h1 class="fade-up">MediScan</h1>
+  <p class="fade-up delay-1">
+    MediScan est un jeu éducatif médical permettant d’identifier des anomalies
+    cliniques à partir d’images comparatives.
+  </p>
+  <button class="fade-up delay-2" onclick="startGame()">Commencer le jeu</button>
+</div>
 
-        let currentIndex = 0;
+<!-- GAME -->
+<div id="game">
+  <h2 id="criteria"></h2>
 
-        // -----------------------
-        // FONCTIONS
-        // -----------------------
+  <div class="images">
+    <img id="img1" onclick="checkAnswer(0)">
+    <img id="img2" onclick="checkAnswer(1)">
+  </div>
 
-        // Démarrer le jeu
-        function startGame() {
-            document.getElementById("startPage").style.display = "none";
-            document.getElementById("gamePage").style.display = "flex";
-            showQuestion();
-        }
+  <div class="feedback" id="feedback"></div>
+  <div class="explanation" id="explanation"></div>
 
-        // Afficher la question actuelle
-        function showQuestion() {
-            const q = questions[currentIndex];
-            document.getElementById("criteria").innerHTML = q.criteria + "<br><small>" + q.definition + "</small>";
-            document.getElementById("img1").src = q.images[0];
-            document.getElementById("img2").src = q.images[1];
-            document.getElementById("feedback").classList.remove("show");
-            document.getElementById("feedback").innerHTML = "";
-            document.getElementById("explanation").innerHTML = "";
-            document.getElementById("nextBtn").style.display = "none";
-        }
+  <div>
+    <button id="prevBtn" onclick="prevQuestion()">⬅ Question précédente</button>
+  </div>
+  <div>
+    <button id="nextBtn" onclick="nextQuestion()">Question suivante ➡</button>
+  </div>
+</div>
 
-        // Vérifier la réponse de l'utilisateur
-        function checkAnswer(selected) {
-            const q = questions[currentIndex];
-            const feedback = document.getElementById("feedback");
-            const explanation = document.getElementById("explanation");
+<script>
+const questions = [
+  {
+    images: [
+      "https://via.placeholder.com/220?text=Normal",
+      "https://via.placeholder.com/220?text=Anomalie"
+    ],
+    correct: 1,
+    criteria: "Identifier l'anomalie",
+    explanation: "L’image de droite montre une anomalie visible contrairement à l’image normale."
+  },
+  {
+    images: [
+      "https://via.placeholder.com/220?text=Anomalie",
+      "https://via.placeholder.com/220?text=Normal"
+    ],
+    correct: 0,
+    criteria: "Observer les différences",
+    explanation: "L’image de gauche présente une irrégularité clinique."
+  }
+];
 
-            if(selected === q.correct) {
-                feedback.innerHTML = "✅ Correct !";
-                feedback.style.color = "green";
-            } else {
-                feedback.innerHTML = "❌ Incorrect !";
-                feedback.style.color = "red";
-            }
-            feedback.classList.add("show");
-            explanation.innerHTML = q.explanation;
+let index = 0;
+let answered = false;
 
-            // Montrer le bouton "Next"
-            document.getElementById("nextBtn").style.display = "inline-block";
-        }
+function startGame() {
+  const w = document.getElementById("welcome");
+  const g = document.getElementById("game");
 
-        // Passer à la question suivante
-        function nextQuestion() {
-            currentIndex++;
-            if(currentIndex >= questions.length) {
-                alert("🎉 Tu as terminé toutes les questions !");
-                currentIndex = 0; // recommencer si tu veux
-            }
-            showQuestion();
-        }
-    </script>
+  w.style.opacity = "0";
+  w.style.transform = "scale(0.95)";
+
+  setTimeout(() => {
+    w.style.display = "none";
+    g.style.display = "block";
+    showQuestion();
+  }, 500);
+}
+
+function showQuestion() {
+  const q = questions[index];
+  document.getElementById("criteria").innerText = q.criteria;
+  document.getElementById("img1").src = q.images[0];
+  document.getElementById("img2").src = q.images[1];
+  document.getElementById("feedback").innerText = "";
+  document.getElementById("explanation").innerText = "";
+  
+  answered = false;
+
+  // Buttons visibility
+  document.getElementById("prevBtn").style.display = (index > 0) ? "inline-block" : "none";
+  document.getElementById("nextBtn").style.display = "none"; // hidden until answer
+}
+
+function checkAnswer(choice) {
+  if (answered) return; // prevent multiple clicks
+
+  const q = questions[index];
+  const feedback = document.getElementById("feedback");
+
+  if (choice === q.correct) {
+    feedback.innerText = "✅ Bonne réponse";
+    feedback.style.color = "green";
+  } else {
+    feedback.innerText = "❌ Mauvaise réponse";
+    feedback.style.color = "red";
+  }
+
+  document.getElementById("explanation").innerText = q.explanation;
+  answered = true;
+  document.getElementById("nextBtn").style.display = (index < questions.length - 1) ? "inline-block" : "none";
+}
+
+function nextQuestion() {
+  if (!answered) return; // cannot go forward without answering
+  if (index < questions.length - 1) index++;
+  showQuestion();
+}
+
+function prevQuestion() {
+  if (index > 0) index--;
+  showQuestion();
+}
+</script>
 
 </body>
 </html>
+
